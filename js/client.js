@@ -39,9 +39,13 @@ async function play() {
     videoBitsPerSecond: 3000000
   });
   mediaRecorder.ondataavailable = async function(e) {
-    console.log("data recieved: "+e);
     const buf = await e.data.arrayBuffer();
-    ws.sendData(buf);
+    console.log("data recieved: " + buf.byteLength);
+    console.log("isOpen: " + ws.readyState);
+    console.log("value: " + WebSocket.OPEN);
+    console.log("bla: " + (ws.readyState === WebSocket.OPEN));
+    console.log("buf: " + buf);
+    ws.send(buf);
   };
   mediaRecorder.start(1000/20); // 20 fps
 
