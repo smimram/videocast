@@ -40,11 +40,12 @@ async function play() {
   });
   mediaRecorder.ondataavailable = async function(e) {
     const buf = await e.data.arrayBuffer();
-    console.log("data recieved: " + buf.byteLength);
-    console.log("isOpen: " + ws.readyState);
-    console.log("value: " + WebSocket.OPEN);
-    console.log("bla: " + (ws.readyState === WebSocket.OPEN));
-    console.log("buf: " + buf);
+    console.log("got data!");
+    // console.log("data recieved: " + buf.byteLength);
+    // console.log("isOpen: " + ws.readyState);
+    // console.log("value: " + WebSocket.OPEN);
+    // console.log("bla: " + (ws.readyState === WebSocket.OPEN));
+    // console.log("buf: " + buf);
     ws.send(buf);
   };
   mediaRecorder.start(1000/20); // 20 fps
@@ -67,5 +68,5 @@ async function play() {
 }
 
 window.onload = function() {
-  document.querySelector('button').addEventListener('click', play);
+  document.querySelector('#start').addEventListener('click', play);
 }
