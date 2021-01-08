@@ -64,20 +64,6 @@ async function play() {
   mediaRecorder.start(1000/20); // 20 fps
 
   document.querySelector('#stop').addEventListener('click', function() { mediaRecorder.stop(); });
-
-  var encoder = new Webcast.Encoder.Mp3({
-    channels: 2,
-    samplerate: 44100,
-    bitrate: 128
-  });
-  // var webcast = audioContext.createWebcastSource(4096, 2);
-  // source.connect(webcast);
-  // webcast.connect(audioContext.destination);
-  // webcast.connectSocket(encoder, "ws://source:hackme@localhost:8080/mount");
-  // webcast.sendMetadata({
-    // title:  "My Awesome Stream",
-    // artist: "The Dude"
-  // });
 }
 
 window.onload = function() {

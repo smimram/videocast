@@ -17,5 +17,7 @@ s = input.harbor("mount", dumpfile="harbor.webm", port=8000)
 e = %ffmpeg(format="webm", %audio.copy, %video.copy)
 output.srt(mode="listener", port=3000, e, fallible=true, s)
 
-# output.graphics(fallible=true, s)
-# output(fallible=true, s)
+s = ffmpeg.decode.audio_video(s)
+
+output.graphics(fallible=true, s)
+output(fallible=true, s)
