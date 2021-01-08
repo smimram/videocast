@@ -12,12 +12,21 @@
   </head>
 
   <body>
-    <h1>Hello mic!</h1>
-    <audio crossorigin="anonymous" src="https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3"></audio>
-    <button id="start" type="button">Start</button>
-    <input type="range" id="volume" min="0" max="2" value="1" step="0.01">
-    <button id="stop" type="button">Stop</button>
+    <h1>Hello video!</h1>
+    <p><label>Server</label><input id="server" value="localhost"></p>
+    <p><label>Port</label><input id="port" value="8080"></p>
+    <p><label>Mount</label><input id="mount" value="mount"></p>
+    <p><label>User</label><input id="user" value="source"></p>
+    <p><label>Pass</label><input id="password" value="hackme"></p>
+    <p><label>Volume</label><input type="range" id="volume" min="0" max="2" value="1" step="0.01"></p>
+    <!-- <audio crossorigin="anonymous" src="https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3"></audio> -->
+    <p>
+      <button id="start" type="button">Start</button>
+      <button id="stop" type="button">Stop</button>
+    </p>
 
-    <video style="width=500px; heigth=375px;" autoplay="true"></video>
+    <p>
+      <video style="width=500px; heigth=375px;" autoplay="true"></video>
+    </p>
   </body>
 </html>

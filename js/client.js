@@ -4,6 +4,7 @@ async function play() {
 
   var audioContext = new AudioContext();
 
+  /*
   const audioElement = document.querySelector('audio');
   const track = audioContext.createMediaElementSource(audioElement);
   const gainNode = audioContext.createGain();
@@ -16,6 +17,7 @@ async function play() {
   }, false);
 
   audioElement.play();
+  */
 
   // Get video stream
   const cam = await navigator.mediaDevices.getUserMedia({
@@ -29,8 +31,19 @@ async function play() {
   video.srcObject = cam;
 
   // Record video
+  //url = "ws://source:hackme@localhost:8080/mount"
+  url = "ws://"
+    + document.querySelector('#user').value
+    + ":"
+    + document.querySelector('#password').value
+    + "@"
+    + document.querySelector('#server').value
+    + ":"
+    + document.querySelector('#port').value
+    + "/"
+    + document.querySelector('#mount').value;
   const ws = Webcast.Socket({
-    url: "ws://source:hackme@localhost:8080/mount",
+    url: url,
     mime: "video/webm",
     info: {}
   })
