@@ -1,8 +1,8 @@
 async function play() {
   console.log("Playing...");
-  window.AudioContext = window.AudioContext || window.webkitAudioContext;
+  // window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-  var audioContext = new AudioContext();
+  // var audioContext = new AudioContext();
 
   /*
   const audioElement = document.querySelector('audio');
@@ -20,7 +20,7 @@ async function play() {
   */
 
   // Get video stream
-  const cam = await navigator.mediaDevices.getUserMedia({
+  const webcam = await navigator.mediaDevices.getUserMedia({
     audio: true,
     video: true
   });
@@ -28,7 +28,7 @@ async function play() {
 
   // Display video
   video = document.querySelector("video");
-  video.srcObject = cam;
+  video.srcObject = webcam;
 
   // Record video
   //url = "ws://source:hackme@localhost:8080/mount"
@@ -47,13 +47,13 @@ async function play() {
     mime: "video/webm",
     info: {}
   })
-  const mediaRecorder = new MediaRecorder(cam, {
+  const mediaRecorder = new MediaRecorder(webcam, {
     mimeType: 'video/webm',
     videoBitsPerSecond: 3000000
   });
   mediaRecorder.ondataavailable = async function(e) {
     const buf = await e.data.arrayBuffer();
-    console.log("got data!");
+    // console.log("got data!");
     // console.log("data recieved: " + buf.byteLength);
     // console.log("isOpen: " + ws.readyState);
     // console.log("value: " + WebSocket.OPEN);
@@ -63,7 +63,7 @@ async function play() {
   };
   mediaRecorder.start(1000/20); // 20 fps
 
-  document.querySelector('#stop').addEventListener('click', function() { mediaRecorder.stop(); });
+  document.querySelector('#stop').addEventListener('click', function() { mediaRecorder.stop(); video.srcObject = null; });
 }
 
 window.onload = function() {

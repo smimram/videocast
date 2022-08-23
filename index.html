@@ -9,24 +9,43 @@
     <script src="js/webcast.js"></script>
     <script src="js/client.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
   </head>
 
   <body>
     <h1>Hello video!</h1>
-    <p><label>Server</label><input id="server" value="localhost"></p>
-    <p><label>Port</label><input id="port" value="8000"></p>
-    <p><label>Mount</label><input id="mount" value="mount"></p>
-    <p><label>User</label><input id="user" value="source"></p>
-    <p><label>Pass</label><input id="password" value="hackme"></p>
-    <p><label>Volume</label><input type="range" id="volume" min="0" max="2" value="1" step="0.01"></p>
     <!-- <audio crossorigin="anonymous" src="https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3"></audio> -->
     <p>
       <button id="start" type="button">Start</button>
       <button id="stop" type="button">Stop</button>
     </p>
 
+    <p>Local video</p>
     <p>
-      <video style="width=500px; heigth=375px;" autoplay="true"></video>
+      <video id="video" autoplay="true" controls muted></video>
     </p>
+
+    <p>Distant video</p>
+    <p>
+      <video id="video" autoplay="true" src="http://localhost:8080/stream" type="video/webm" controls></video>
+    </p>
+
+    <p>
+      <label>Volume</label>
+      <input type="range" id="volume" min="0" max="2" value="1" step="0.01">
+    </p>
+
+    <form id="server-params">
+      <label>Server</label>
+      <input id="server" value="localhost">
+      <label>Port</label>
+      <input id="port" type="number" value="8000">
+      <label>Mount</label>
+      <input id="mount" value="speaker">
+      <label>User</label>
+      <input id="user" value="source">
+      <label>Pass</label>
+      <input id="password" value="hackme">
+    </form>
   </body>
 </html>
