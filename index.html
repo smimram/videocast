@@ -41,6 +41,14 @@
       <input type="range" id="volume" min="0" max="2" value="1" step="0.01">
     </p>
 
+    <!-- https://stackoverflow.com/questions/49233124/file-upload-without-page-refresh -->
+    <form action="/upload" method="post" enctype="multipart/form-data" target="upload-iframe">
+      <label>Upload slides</label>
+      <input type="file" accept="application/pdf,application/x-pdf,.pdf">
+      <button>Upload</button>
+    </form>
+     <iframe name="upload-iframe" src="/upload" style="display:none;"></iframe>
+
     <form id="server-params">
       <label>Server</label>
       <input id="server" value="localhost">

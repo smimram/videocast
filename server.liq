@@ -32,7 +32,7 @@ def pdf2png(pdf)
 end
 # slides = video.color(0x00ff00)
 png = pdf2png("slides.pdf")
-print("png files: #{png}")
+# print("png files: #{png}")
 slides = video.slideshow(png)
 
 # Move slides
@@ -50,6 +50,15 @@ def slide(~protocol=_, ~data=_, ~headers=_, _)
   http.response(data=file.contents(slides.current()))
 end
 harbor.http.register("slide", slide)
+
+# Upload slides
+def upload(~protocol=_, ~data, ~headers=_, _)
+  print("GOT DATA")
+  print(data)
+  print("END DATA")
+  http.response()
+end
+harbor.http.register(method="POST", "upload", upload)
 
 ### The speaker
 

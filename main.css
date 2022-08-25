@@ -25,10 +25,11 @@ h1 {
   float: right;
 }
 
-#server-params {
+form {
   background-color: whitesmoke;
   border-radius: 5px;
   padding: 20px;
+  margin: 20px 0px;
 }
 
 input {
