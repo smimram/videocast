@@ -1,3 +1,4 @@
+#!../liquidsoap/liquidsoap
 #!/bin/env -S liquidsoap
 
 width = 640
@@ -7,10 +8,31 @@ set("log.level", 5)
 set("frame.video.width", width)
 set("frame.video.height", height)
 
-speaker = input.harbor(buffer=2., "speaker", port=8000)
+# Convert a pdf to a list of png files.
+def pdf2png(pdf)
+  dir = file.temp_dir("liqpdf")
+  if process.test("pdftoppm -png #{process.quote(pdf)} #{dir}/pdf") then
+    file.ls(absolute=true, sorted=true, dir)
+  else
+    []
+  end
+end
 
-s = speaker
-s = video.add_text(x=640, speed=100, "Hello world!", s)
+# slides = video.color(0x00ff00)
+png = pdf2png("slides.pdf")
+print("png files: #{png}")
+slides = video.slideshow(advance=1., png)
+slides = video.crop(slides)
+slides = video.viewport(slides)
+# speaker = input.harbor(buffer=2., "speaker", port=8000)
+speaker = single("harbor.webm")
+# speaker = (single("harbor.webm") : source(video=canvas(width=100,height=100)))
+speaker = video.crop(speaker)
+speaker = fallback([speaker, video.color(0x0000ff)])
+speaker = video.resize(proportional=true, width=120, height=120, speaker)
+speaker = video.translate(x=width-120, speaker)
+s = add([slides, speaker])
+s = video.add_text(x=640, speed=100, color=0xff0000, "Hello world!", s)
 
 # e = %ffmpeg(format="webm", %audio.copy, %video.copy)
 # e = %ffmpeg(format="mpegts",
