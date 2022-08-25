@@ -23,6 +23,8 @@ end
 png = pdf2png("slides.pdf")
 # print("png files: #{png}")
 slides = video.slideshow(png)
+
+# Move slides
 def advance(next)
   fun (~protocol=_, ~data=_, ~headers=_, _) -> begin
     if next then slides.next() else slides.prev() end
@@ -32,12 +34,11 @@ end
 harbor.http.register("prev", advance(false))
 harbor.http.register("next", advance(true))
 
+# Current slide
 def slide(~protocol=_, ~data=_, ~headers=_, _)
   "HTTP/1.1 200 OK\r\n\r\n" ^ file.contents(slides.current())
 end
 harbor.http.register("slide", slide)
-
-slides = video.align(top=true, left=true, slides)
 
 ### The speaker
 
@@ -46,10 +47,17 @@ speaker = input.harbor(buffer=2., "speaker", port=8000)
 # speaker = (single("harbor.webm") : source(video=canvas(width=100,height=100)))
 speaker = video.crop(speaker)
 speaker = fallback(track_sensitive=false, [speaker, video.color(0x0000ff)])
+
+### Combine everybody
+
+slides = video.align(top=true, left=true, slides)
 speaker = video.resize(proportional=true, width=120, height=120, speaker)
+speaker = video.align(top=true, right=true, speaker)
 speaker = video.translate(x=width-120, speaker)
 s = add([slides, speaker])
 s = video.add_text(x=640, speed=100, color=0xff0000, "Hello world!", s)
+
+### Encode
 
 # e = %ffmpeg(format="webm", %audio.copy, %video.copy)
 # e = %ffmpeg(format="mpegts",

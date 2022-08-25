@@ -10,6 +10,9 @@ h1 {
 
 #slide {
   width: 100%;
+  border: solid;
+  border-width: 1px;
+  color: lightgray;
 }
 
 #video {
