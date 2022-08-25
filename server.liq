@@ -8,6 +8,8 @@ set("log.level", 5)
 set("frame.video.width", width)
 set("frame.video.height", height)
 
+### The slideshow
+
 # Convert a pdf to a list of png files.
 def pdf2png(pdf)
   dir = file.temp_dir("liqpdf")
@@ -17,18 +19,33 @@ def pdf2png(pdf)
     []
   end
 end
-
 # slides = video.color(0x00ff00)
 png = pdf2png("slides.pdf")
-print("png files: #{png}")
-slides = video.slideshow(advance=1., png)
-slides = video.crop(slides)
-slides = video.viewport(slides)
-# speaker = input.harbor(buffer=2., "speaker", port=8000)
-speaker = single("harbor.webm")
+# print("png files: #{png}")
+slides = video.slideshow(png)
+def advance(next)
+  fun (~protocol=_, ~data=_, ~headers=_, _) -> begin
+    if next then slides.next() else slides.prev() end
+    ""
+  end
+end
+harbor.http.register("prev", advance(false))
+harbor.http.register("next", advance(true))
+
+def slide(~protocol=_, ~data=_, ~headers=_, _)
+  "HTTP/1.1 200 OK\r\n\r\n" ^ file.contents(slides.current())
+end
+harbor.http.register("slide", slide)
+
+slides = video.align(top=true, left=true, slides)
+
+### The speaker
+
+speaker = input.harbor(buffer=2., "speaker", port=8000)
+# speaker = single("harbor.webm")
 # speaker = (single("harbor.webm") : source(video=canvas(width=100,height=100)))
 speaker = video.crop(speaker)
-speaker = fallback([speaker, video.color(0x0000ff)])
+speaker = fallback(track_sensitive=false, [speaker, video.color(0x0000ff)])
 speaker = video.resize(proportional=true, width=120, height=120, speaker)
 speaker = video.translate(x=width-120, speaker)
 s = add([slides, speaker])

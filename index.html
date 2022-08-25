@@ -5,8 +5,8 @@
     <meta charset="utf-8"/>
     <title>Webcaster Client</title>
 
-    <script src="js/webcast.js"></script>
-    <script src="js/client.js"></script>
+    <script src="webcast.js"></script>
+    <script src="client.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="main.css">
   </head>
@@ -14,6 +14,7 @@
   <body>
     <h1>Hello video!</h1>
     <!-- <audio crossorigin="anonymous" src="https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3"></audio> -->
+
     <p>
       <button id="start" type="button">Start</button>
       <button id="stop" type="button">Stop</button>
@@ -22,6 +23,11 @@
     <p>Local video</p>
     <p>
       <video id="video" autoplay="true" controls muted></video>
+    </p>
+
+    <p>
+      <button id="prev" type="button">Previous slide</button>
+      <button id="next" type="button">Next slide</button>
     </p>
 
     <!-- <p>Distant video</p> -->
