@@ -61,6 +61,29 @@ async function play() {
   document.querySelector('#stop').addEventListener('click', stop);
 }
 
+function base_url() {
+  return "http://"
+    + document.querySelector('#server').value
+    + ":"
+    + document.querySelector('#port').value;
+}
+
+function refresh_slide () {
+  document.querySelector('#slide').src = base_url() + "/slide?" + new Date().getTime();
+}
+
+async function prev() {
+  fetch(base_url() + "/prev");
+  refresh_slide();
+}
+async function next() {
+  fetch(base_url() + "/next");
+  refresh_slide();
+}
+
 window.onload = function() {
   document.querySelector('#start').addEventListener('click', play);
+  document.querySelector('#prev').addEventListener('click', prev);
+  document.querySelector('#next').addEventListener('click', next);
+  refresh_slide();
 }

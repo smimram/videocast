@@ -8,6 +8,10 @@ h1 {
   text-align: center;
 }
 
+#slide {
+  width: 100%;
+}
+
 #video {
   width: 100%;
   border: solid;
