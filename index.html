@@ -42,9 +42,9 @@
     </p>
 
     <!-- https://stackoverflow.com/questions/49233124/file-upload-without-page-refresh -->
-    <form action="/upload" method="post" enctype="multipart/form-data" target="upload-iframe">
+    <form action="http://localhost:8000/upload" method="post" enctype="multipart/form-data" target="upload-iframe">
       <label>Upload slides</label>
-      <input type="file" accept="application/pdf,application/x-pdf,.pdf">
+      <input name="file" type="file" accept="application/pdf,application/x-pdf,.pdf">
       <button>Upload</button>
     </form>
      <iframe name="upload-iframe" src="/upload" style="display:none;"></iframe>

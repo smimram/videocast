@@ -52,10 +52,13 @@ end
 harbor.http.register("slide", slide)
 
 # Upload slides
-def upload(~protocol=_, ~data, ~headers=_, _)
-  print("GOT DATA")
-  print(data)
-  print("END DATA")
+def upload(~protocol=_, ~data, ~headers, url)
+  # print("GOT DATA")
+  # print("headers: #{headers}")
+  # print("url: #{url}")
+  # print("DATA: <#{data}>")
+  # print("END DATA")
+  file.write(data=data, "/tmp/data")
   http.response()
 end
 harbor.http.register(method="POST", "upload", upload)
