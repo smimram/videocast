@@ -8,6 +8,17 @@ set("log.level", 5)
 set("frame.video.width", width)
 set("frame.video.height", height)
 
+### The server
+
+def content_type(fname)
+  if string.contains(suffix=".html", fname) then "text/html"
+  elsif string.contains(suffix=".css", fname) then "text/css"
+  elsif string.contains(suffix=".js", fname) then "text/javascript"
+  else "text/plain"
+  end
+end
+harbor.http.static(content_type=content_type, path="/control", ".")
+
 ### The slideshow
 
 # Convert a pdf to a list of png files.
@@ -21,14 +32,14 @@ def pdf2png(pdf)
 end
 # slides = video.color(0x00ff00)
 png = pdf2png("slides.pdf")
-# print("png files: #{png}")
+print("png files: #{png}")
 slides = video.slideshow(png)
 
 # Move slides
 def advance(next)
   fun (~protocol=_, ~data=_, ~headers=_, _) -> begin
     if next then slides.next() else slides.prev() end
-    ""
+    http.response(headers=[("Access-Control-Allow-Origin","*")])
   end
 end
 harbor.http.register("prev", advance(false))
@@ -36,7 +47,7 @@ harbor.http.register("next", advance(true))
 
 # Current slide
 def slide(~protocol=_, ~data=_, ~headers=_, _)
-  "HTTP/1.1 200 OK\r\n\r\n" ^ file.contents(slides.current())
+  http.response(data=file.contents(slides.current()))
 end
 harbor.http.register("slide", slide)
 

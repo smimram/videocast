@@ -73,12 +73,26 @@ function refresh_slide () {
 }
 
 async function prev() {
-  fetch(base_url() + "/prev");
-  refresh_slide();
+  // console.log("Previous slide");
+  fetch(base_url() + "/prev").then((_) => refresh_slide());
 }
+
 async function next() {
-  fetch(base_url() + "/next");
-  refresh_slide();
+  // console.log("Next slide");
+  fetch(base_url() + "/next").then((_) => refresh_slide());
+}
+
+function on_key(e) {
+  switch (e.keyCode) {
+  case 37:
+    // alert('left');
+    prev();
+    break;
+  case 39:
+    // alert('right');
+    next();
+    break;
+  }
 }
 
 window.onload = function() {
@@ -86,4 +100,5 @@ window.onload = function() {
   document.querySelector('#prev').addEventListener('click', prev);
   document.querySelector('#next').addEventListener('click', next);
   refresh_slide();
+  document.addEventListener('keydown', on_key)
 }
