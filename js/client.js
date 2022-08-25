@@ -24,7 +24,6 @@ async function play() {
     audio: true,
     video: true
   });
-  console.log("Got cam stream");
 
   // Display video
   video = document.querySelector("video");
@@ -42,28 +41,24 @@ async function play() {
     + document.querySelector('#port').value
     + "/"
     + document.querySelector('#mount').value;
-  const ws = Webcast.Socket({
-    url: url,
-    mime: "video/webm",
-    info: {}
-  })
   const mediaRecorder = new MediaRecorder(webcam, {
     mimeType: 'video/webm',
     videoBitsPerSecond: 3000000
   });
-  mediaRecorder.ondataavailable = async function(e) {
-    const buf = await e.data.arrayBuffer();
-    // console.log("got data!");
-    // console.log("data recieved: " + buf.byteLength);
-    // console.log("isOpen: " + ws.readyState);
-    // console.log("value: " + WebSocket.OPEN);
-    // console.log("bla: " + (ws.readyState === WebSocket.OPEN));
-    // console.log("buf: " + buf);
-    ws.send(buf);
-  };
+  const ws = new Webcast.Socket({
+    mediaRecorder,
+    url: url,
+    info: {}
+  })
   mediaRecorder.start(1000/20); // 20 fps
 
-  document.querySelector('#stop').addEventListener('click', function() { mediaRecorder.stop(); video.srcObject = null; });
+  function stop() {
+    mediaRecorder.stop();
+    webcam.getTracks().forEach(track => track.stop());
+    video.srcObject = null;
+  }
+
+  document.querySelector('#stop').addEventListener('click', stop);
 }
 
 window.onload = function() {

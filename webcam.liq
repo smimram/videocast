@@ -8,6 +8,6 @@ set("frame.video.width", width)
 set("frame.video.height", height)
 
 s = input.harbor(buffer=2., "speaker", port=8000)
-s = fallback([s,video.color(0x0000ff)])
+# s = fallback([s, video.color(0x0000ff)])
 
-output.graphics(s)
+output.graphics(mksafe(s))
