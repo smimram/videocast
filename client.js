@@ -98,7 +98,7 @@ function on_key(e) {
 function upload_slides() {
   data = document.querySelector('#slides-file').files[0];
   document.querySelector('#upload-slides').innerHTML = "<p>Uploading...</p>";
-  fetch(base_url() + "/upload", {method: "POST", body: data});
+  fetch(base_url() + "/upload", {method: "POST", body: data}).then((_) => document.querySelector('#upload-slides').innerHTML = "<p>Uploaded!</p>");
 }
 
 window.onload = function() {
