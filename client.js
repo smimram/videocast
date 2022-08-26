@@ -95,10 +95,17 @@ function on_key(e) {
   }
 }
 
+function upload_slides() {
+  data = document.querySelector('#slides-file').files[0];
+  document.querySelector('#upload-slides').innerHTML = "<p>Uploading...</p>";
+  fetch(base_url() + "/upload", {method: "POST", body: data});
+}
+
 window.onload = function() {
   document.querySelector('#start').addEventListener('click', play);
   document.querySelector('#prev').addEventListener('click', prev);
   document.querySelector('#next').addEventListener('click', next);
   refresh_slide();
-  document.addEventListener('keydown', on_key)
+  document.addEventListener('keydown', on_key);
+  document.querySelector('#upload-slides').addEventListener('submit', function(event) {event.preventDefault(); upload_slides()});
 }

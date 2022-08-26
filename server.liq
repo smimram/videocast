@@ -53,13 +53,43 @@ harbor.http.register("slide", slide)
 
 # Upload slides
 def upload(~protocol=_, ~data, ~headers, url)
-  # print("GOT DATA")
-  # print("headers: #{headers}")
-  # print("url: #{url}")
-  # print("DATA: <#{data}>")
-  # print("END DATA")
-  file.write(data=data, "/tmp/data")
-  http.response()
+  boundary = string.residual(prefix="multipart/form-data; boundary=", list.assoc("Content-Type", headers))
+  if not null.defined(boundary) then
+    http.response(code=400, data="Bad request")
+  else
+    boundary = null.get(boundary)
+    print("*** boundary: #{boundary}")
+    l = string.split(separator=boundary, data)
+    print("list length: #{list.length(l)}")
+    assert(list.length(l) == 2)
+    assert(list.nth(l, 0) == "--")
+    print("l0 ok")
+    assert(list.nth(l, 2) == "--")
+    print("l2 ok")
+    data = list.nth(l, 1)
+    data = null.get(string.residual(prefix="\r\n", data))
+    data = ref(data)
+    headers = ref([])
+    while not string.contains(prefix="\r\n", !data) do
+      n = string.index(substring="\r\n", !data)
+      header = string.sub(!data, start=0, length=n)
+      data := string.sub(!data, start=n+2, length=string.length(!data)-2)
+      n = string.index(substring=": ", header)
+      k = string.sub(header, start=0, length=n)
+      v = string.sub(header, start=n+2, length=string.length(header)-2)
+      headers := list.add((k,v), !headers)
+    end
+    data = !data
+    headers = !headers
+    print("headers: #{headers}")
+    # print("GOT DATA")
+    # print("headers: #{headers}")
+    # print("url: #{url}")
+    # print("DATA: <#{data}>")
+    # print("END DATA")
+    file.write(data=data, "/tmp/data")
+    http.response(headers=[("Access-Control-Allow-Origin","*")])
+  end
 end
 harbor.http.register(method="POST", "upload", upload)
 
