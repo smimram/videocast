@@ -45,12 +45,39 @@ async function play() {
     mimeType: 'video/webm',
     videoBitsPerSecond: 3000000
   });
-  const ws = new Webcast.Socket({
-    mediaRecorder,
-    url: url,
-    info: {}
-  })
-  mediaRecorder.start(1000/20); // 20 fps
+
+  const connectMax = 10;
+  let connectCount = 0;
+
+  function connect() {
+    function onopen(event) {
+      console.log("Connected!");
+      connectCount = 0;
+    }
+
+    function onerror(event) {
+      console.log('WebSocket error: ', event);
+      if (connectCount++ <= connectMax) {
+        console.log('Reconnecting... (', connectCount, ')');
+        connect();
+      }
+      else {
+        console.log('Maximum connection tries reached, aborting.');
+      }
+    }
+
+    mediaRecorder.stop();
+    const ws = new Webcast.Socket({
+      mediaRecorder,
+      url: url,
+      info: {},
+      onopen: onopen,
+      onerror: onerror
+    });
+    mediaRecorder.start(1000/20); // 20 fps
+  }
+
+  connect();
 
   function stop() {
     mediaRecorder.stop();
