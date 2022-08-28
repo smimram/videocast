@@ -68,7 +68,7 @@ def upload(~protocol=_, ~data, ~headers, url)
   png = pdf2png(fname)
   log.important("Adding #{list.length(png)} slides")
   slides.append(png)
-  http.response(headers=[("Access-Control-Allow-Origin","*")])
+  http.response(headers=[("Access-Control-Allow-Origin","*")], data="Added #{list.length(png)} slides.")
 end
 harbor.http.register(method="POST", "upload", upload)
 
