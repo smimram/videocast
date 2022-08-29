@@ -20,9 +20,18 @@ async function play() {
   */
 
   // Get video stream
+  const webcamId = document.getElementById('webcams').value;
   const webcam = await navigator.mediaDevices.getUserMedia({
+    // audio: {
+      // echoCancellation: true,
+      // noiseSuppression: true,
+      // sampleRate: 44100,
+    // },
     audio: true,
-    video: true
+    video: {
+      deviceId: webcamId,
+      facingMode: "user",
+    }
   });
 
   // Display video
@@ -54,7 +63,7 @@ async function play() {
     function onerror(event) {
       console.log('WebSocket error: ', event);
       if (connectCount++ <= connectMax) {
-        console.log('Reconnecting... (', connectCount, ')');
+        console.log(`Reconnecting... (${connectCount})`);
         connect();
       }
       else {
@@ -124,6 +133,23 @@ function upload_slides() {
   fetch(base_url() + "/upload", {method: "POST", body: data}).then((response) => response.text()).then((text) => document.querySelector('#upload-slides').innerHTML = '<p>Uploaded! ' + text + '</p>');
 }
 
+function enumerateWebcams() {
+  navigator.mediaDevices.enumerateDevices().then((devices) => {
+    const select = document.getElementById('webcams');
+    let count = 0;
+    devices.forEach(device => {
+      if (device.kind === 'videoinput') {
+        const option = document.createElement('option');
+        option.value = device.deviceId;
+        const label = device.label || `Camera ${count++}`;
+        const textNode = document.createTextNode(label);
+        option.appendChild(textNode);
+        select.appendChild(option);
+      }
+    });
+  });
+}
+
 window.onload = function() {
   document.querySelector('#start').addEventListener('click', play);
   document.querySelector('#prev').addEventListener('click', prev);
@@ -131,4 +157,5 @@ window.onload = function() {
   refresh_slide();
   document.addEventListener('keydown', on_key);
   document.querySelector('#upload-slides').addEventListener('submit', function(event) {event.preventDefault(); upload_slides()});
+  enumerateWebcams();
 }

@@ -56,7 +56,7 @@ def upload_options(~protocol=_, ~data=_, ~headers=_, _)
   http.response(headers=[("Access-Control-Allow-Origin","*"),("Access-Control-Allow-Headers","*")], code=204)
 end
 harbor.http.register(method="OPTIONS", "upload", upload_options)
-def upload(~protocol=_, ~data, ~headers=_, _)
+def upload(~protocol=_, ~data, ~headers, _)
   print("headers: #{headers}")
   # print("GOT DATA")
   # print("headers: #{headers}")
