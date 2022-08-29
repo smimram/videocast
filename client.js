@@ -30,7 +30,6 @@ async function play() {
     audio: true,
     video: {
       deviceId: webcamId,
-      facingMode: "user",
     }
   });
 
