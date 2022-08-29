@@ -30,17 +30,13 @@ async function play() {
   video.srcObject = webcam;
 
   // Record video
-  //url = "ws://source:hackme@localhost:8080/mount"
-  url = "ws://"
-    + document.querySelector('#user').value
-    + ":"
-    + document.querySelector('#password').value
-    + "@"
-    + document.querySelector('#server').value
-    + ":"
-    + document.querySelector('#port').value
-    + "/"
-    + document.querySelector('#mount').value;
+  const user = document.querySelector('#user').value;
+  const password = document.querySelector('#password').value;
+  const server = document.querySelector('#server').value;
+  const port = document.querySelector('#port').value;
+  const mount = document.querySelector('#mount').value;
+  const url = `ws://${user}:${password}@${server}:${port}/${mount}`;
+
   const mediaRecorder = new MediaRecorder(webcam, {
     mimeType: 'video/webm',
     videoBitsPerSecond: 3000000

@@ -56,7 +56,7 @@ def upload_options(~protocol=_, ~data=_, ~headers=_, _)
   http.response(headers=[("Access-Control-Allow-Origin","*"),("Access-Control-Allow-Headers","*")], code=204)
 end
 harbor.http.register(method="OPTIONS", "upload", upload_options)
-def upload(~protocol=_, ~data, ~headers, url)
+def upload(~protocol=_, ~data, ~headers=_, _)
   print("headers: #{headers}")
   # print("GOT DATA")
   # print("headers: #{headers}")
@@ -94,6 +94,6 @@ s = video.add_text(x=640, y=320, speed=100, color=0xff0000, "Hello world!", s)
 output.graphics(mksafe(s))
 
 ytkey = string.trim(file.contents("youtube-key"))
-ytenc = %ffmpeg(format="mpegts", %audio(codec="libmp3lame", samplerate=44100, q=5), %video(codec="libx264", width=width, height=height, b="800k", g=50, preset="veryfast"))
+ytenc = %ffmpeg(format="flv", %audio(codec="libmp3lame", samplerate=44100, q=5), %video(codec="libx264", width=width, height=height, b="800k", g=50, preset="veryfast"))
 
-output.youtube.live.hls(key=ytkey, encoder=ytenc, mksafe(s))
+output.youtube.live.rtmp(key=ytkey, encoder=ytenc, mksafe(s))
