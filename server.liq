@@ -26,14 +26,14 @@ interactive.harbor()
 # Convert a pdf to a list of png files.
 def pdf2png(pdf)
   dir = file.temp_dir("liqpdf")
-  if process.test("pdftoppm -png #{process.quote(pdf)} #{dir}/pdf") then
+  if process.test(timeout=60., "pdftoppm -png #{process.quote(pdf)} #{dir}/pdf") then
     file.ls(absolute=true, sorted=true, dir)
   else
     []
   end
 end
 # slides = video.color(0x00ff00)
-png = pdf2png("slides.pdf")
+png = pdf2png("liquidsoap.pdf")
 # print("png files: #{png}")
 slides = video.slideshow(png)
 
@@ -79,23 +79,24 @@ harbor.http.register(method="POST", "upload", upload)
 
 ### The speaker
 
-speaker = input.harbor(buffer=2., "speaker", port=8000)
+speaker = input.harbor(buffer=1., "speaker", port=8000)
 speaker = video.crop(speaker)
 speaker = fallback(track_sensitive=false, [speaker, video.color(0x0000ff)])
 
 ### Guests
 
-guest1 = input.harbor(buffer=2., "guest1", port=8000)
+guest1 = input.harbor(buffer=1., "guest1", port=8000)
 guest1 = video.crop(guest1)
 guest1 = fallback(track_sensitive=false, [guest1, video.color(0x00ff00)])
 
-guest2 = input.harbor(buffer=2., "guest2", port=8000)
+guest2 = input.harbor(buffer=1., "guest2", port=8000)
 guest2 = video.crop(guest2)
 guest2 = fallback(track_sensitive=false, [guest2, video.color(0xff0000)])
 
 ### Combine everybody
 
-slides = video.align(top=true, left=true, slides)
+slides = video.align(slides)
+slides = video.resize(width=width-120, height=height, slides)
 
 speaker = video.resize(proportional=true, width=120, height=120, speaker)
 
@@ -116,7 +117,9 @@ guest2 = video.resize(proportional=true, width=120, height=120, guest2)
 guest2 = video.align(bottom=true, right=true, guest2)
 guest2 = video.translate(x=width-120, y=240, guest2)
 
-s = add([slides, guest1, guest2, speaker])
+white = video.color(0xffffff)
+
+s = add([white, slides, guest1, guest2, speaker])
 s = video.add_text(x=640, y=320, speed=100, color=0xff0000, "Hello world!", s)
 
 ### Encode
