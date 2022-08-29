@@ -40,12 +40,23 @@
     <!-- <p> -->
       <!-- <label>Volume</label> -->
       <!-- <input type="range" id="volume" min="0" max="2" value="1" step="0.01"> -->
-    <!-- </p> -->
+      <!-- </p> -->
+
+    <p>Slides</p>
 
     <form id="upload-slides">
       <label>Upload slides</label>
       <input id="slides-file" type="file" accept="application/pdf,application/x-pdf,.pdf">
       <input type="submit" value="Upload">
+    </form>
+
+    <p>Quality</p>
+
+    <form id="quality">
+      <label>FPS</label>
+      <input id="fps" type="number" value="10">
+      <label>kbps</label>
+      <input id="kbps" type="number" value="500" step="100">
     </form>
 
     <form id="server-params">

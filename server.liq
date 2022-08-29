@@ -1,8 +1,9 @@
 #!../liquidsoap/liquidsoap
 #!/bin/env -S liquidsoap
 
-width = 640
-height = 360
+width = 960
+height = 540
+dvid = height/3
 
 set("log.level", 5)
 set("frame.video.width", width)
@@ -96,9 +97,9 @@ guest2 = fallback(track_sensitive=false, [guest2, video.color(0xff0000)])
 ### Combine everybody
 
 slides = video.align(slides)
-slides = video.resize(width=width-120, height=height, slides)
+slides = video.resize(width=width-dvid, height=height, slides)
 
-speaker = video.resize(proportional=true, width=120, height=120, speaker)
+speaker = video.resize(proportional=true, width=dvid, height=dvid, speaker)
 
 # TODO: the following makes a segv when changing the value...
 # swap = interactive.bool("swap-speaker-slides", description="Swap speaker and slides.", false)
@@ -107,20 +108,20 @@ speaker = video.resize(proportional=true, width=120, height=120, speaker)
 # speaker = source.dynamic({if swap() then slides' else speaker end})
 
 speaker = video.align(top=true, right=true, speaker)
-speaker = video.translate(x=width-120, speaker)
+speaker = video.translate(x=width-dvid, speaker)
 
-guest1 = video.resize(proportional=true, width=120, height=120, guest1)
+guest1 = video.resize(proportional=true, width=dvid, height=dvid, guest1)
 guest1 = video.align(right=true, guest1)
-guest1 = video.translate(x=width-120, y=120, guest1)
+guest1 = video.translate(x=width-dvid, y=dvid, guest1)
 
-guest2 = video.resize(proportional=true, width=120, height=120, guest2)
+guest2 = video.resize(proportional=true, width=dvid, height=dvid, guest2)
 guest2 = video.align(bottom=true, right=true, guest2)
-guest2 = video.translate(x=width-120, y=240, guest2)
+guest2 = video.translate(x=width-dvid, y=2*dvid, guest2)
 
-white = video.color(0xffffff)
+bg = video.color(0xeeeeee)
 
-s = add([white, slides, guest1, guest2, speaker])
-s = video.add_text(x=640, y=320, speed=100, color=0xff0000, "Hello world!", s)
+s = add([bg, slides, guest1, guest2, speaker])
+s = video.add_text(x=width, y=height-50, speed=100, color=0xff0000, "Hello world!", s)
 
 ### Encode
 

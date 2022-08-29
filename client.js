@@ -22,12 +22,11 @@ async function play() {
   // Get video stream
   const webcamId = document.getElementById('webcams').value;
   const webcam = await navigator.mediaDevices.getUserMedia({
-    // audio: {
-      // echoCancellation: true,
-      // noiseSuppression: true,
-      // sampleRate: 44100,
-    // },
-    audio: true,
+    audio: {
+      echoCancellation: true,
+      noiseSuppression: true,
+      sampleRate: 44100,
+    },
     video: {
       deviceId: webcamId,
     }
@@ -45,9 +44,10 @@ async function play() {
   const mount = document.querySelector('#mount').value;
   const url = `ws://${user}:${password}@${server}:${port}/${mount}`;
 
+  const bps = document.getElementById('kbps').value * 1000;
   const mediaRecorder = new MediaRecorder(webcam, {
     mimeType: 'video/webm',
-    videoBitsPerSecond: 3000000
+    videoBitsPerSecond: bps
   });
 
   const connectMax = 10;
@@ -78,7 +78,8 @@ async function play() {
       onopen: onopen,
       onerror: onerror
     });
-    mediaRecorder.start(1000/20); // 20 fps
+    const fps = document.getElementById('fps').value;
+    mediaRecorder.start(1000/fps);
   }
 
   connect();
