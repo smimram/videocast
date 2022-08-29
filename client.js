@@ -93,10 +93,9 @@ async function play() {
 }
 
 function base_url() {
-  return "http://"
-    + document.querySelector('#server').value
-    + ":"
-    + document.querySelector('#port').value;
+  const server = document.getElementById('server').value;
+  const port = document.getElementById('port').value;
+  return `http://${server}:${port}`;
 }
 
 function refresh_slide () {
