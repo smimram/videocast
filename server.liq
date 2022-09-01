@@ -5,6 +5,8 @@ width = 960
 height = 540
 dvid = height/3
 
+buffer = 0.5
+
 set("log.level", 5)
 set("frame.video.width", width)
 set("frame.video.height", height)
@@ -80,24 +82,24 @@ harbor.http.register(method="POST", "upload", upload)
 
 ### The speaker
 
-speaker = input.harbor(buffer=1., "speaker", port=8000)
+speaker = input.harbor(buffer=buffer, "speaker", port=8000)
 speaker = video.crop(speaker)
 speaker = fallback(track_sensitive=false, [speaker, video.color(0x0000ff)])
 
 ### Guests
 
-guest1 = input.harbor(buffer=1., "guest1", port=8000)
+guest1 = input.harbor(buffer=buffer, "guest1", port=8000)
 guest1 = video.crop(guest1)
-guest1 = fallback(track_sensitive=false, [guest1, video.color(0x00ff00)])
+# guest1 = fallback(track_sensitive=false, [guest1, video.color(0x00ff00)])
 
-guest2 = input.harbor(buffer=1., "guest2", port=8000)
+guest2 = input.harbor(buffer=buffer, "guest2", port=8000)
 guest2 = video.crop(guest2)
-guest2 = fallback(track_sensitive=false, [guest2, video.color(0xff0000)])
+# guest2 = fallback(track_sensitive=false, [guest2, video.color(0xff0000)])
 
 ### Combine everybody
 
 slides = video.align(slides)
-slides = video.resize(width=width-dvid, height=height, slides)
+slides = video.resize(proportional=true, width=width-dvid, height=height, slides)
 
 speaker = video.resize(proportional=true, width=dvid, height=dvid, speaker)
 
@@ -119,6 +121,7 @@ guest2 = video.align(bottom=true, right=true, guest2)
 guest2 = video.translate(x=width-dvid, y=2*dvid, guest2)
 
 bg = video.color(0xeeeeee)
+# bg = blank()
 
 s = add([bg, slides, guest1, guest2, speaker])
 s = video.add_text(x=width, y=height-50, speed=100, color=0xff0000, "Hello world!", s)
