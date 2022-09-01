@@ -137,39 +137,17 @@ ytenc = %ffmpeg(format="flv", %audio(codec="libmp3lame", samplerate=44100, q=5),
 
 ### The chat
 
-# Create a chatroom
-def chatroom()
-  l = ref([])
+chat = ref([])
 
-  # Current time.
-  def now()
-    list.length(!l)
-  end
-
-  # Get message from given time.
-  def get(t)
-    t = if t<0 then now()+t else t end
-    list.prefix(now()-t, !l)
-  end
-
-  # Add a new message.
-  def put(~user, ~message)
-    l := {user=user, message=message} :: !l
-  end
-
-  {now=now, get=get, put=put}
+def chat_message(~protocol=_, ~data, ~headers=_, _)
+  chat := data :: !chat
+  chat := list.prefix(20, !chat)
+  http.response()
 end
+harbor.http.register(method="POST", "chat/message", chat_message)
 
-room = chatroom()
-
-def chat(~protocol=_, ~data, ~headers=_, _)
-  let json.parse c = data
-  if c.cmd == "message" then
-    # let json.parse m = data
-    
-    ()
-  end
-  http.response(data="0")
+def chat_get(~protocol=_, ~data=_, ~headers=_, _)
+  ans = string.concat(separator="\n", list.rev(!chat))
+  http.response(data=ans)
 end
-
-harbor.http.register("chat", chat)
+harbor.http.register("chat/get", chat_get)

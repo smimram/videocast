@@ -25,6 +25,10 @@ h1 {
   float: right;
 }
 
+#chat {
+  width: 100%;
+}
+
 form {
   background-color: whitesmoke;
   border-radius: 5px;
