@@ -96,10 +96,33 @@ guest2 = input.harbor(buffer=buffer, "guest2", port=8000)
 guest2 = video.crop(guest2)
 # guest2 = fallback(track_sensitive=false, [guest2, video.color(0xff0000)])
 
+### The chat
+
+chat = ref([])
+
+def chat_message(~protocol=_, ~data, ~headers=_, _)
+  chat := data :: !chat
+  chat := list.prefix(100, !chat)
+  http.response()
+end
+harbor.http.register(method="POST", "chat/message", chat_message)
+
+def chat(n=1000)
+  chat = list.prefix(n, !chat)
+  string.concat(separator="\n", list.rev(chat))
+end
+
+def chat_get(~protocol=_, ~data=_, ~headers=_, _)
+  http.response(data=chat())
+end
+harbor.http.register("chat/get", chat_get)
+
+chat = video.text.native(color=0x000000, {chat(4)})
+
 ### Combine everybody
 
-slides = video.align(slides)
 slides = video.resize(proportional=true, width=width-dvid, height=height, slides)
+slides = video.align(top=true, slides)
 
 speaker = video.resize(proportional=true, width=dvid, height=dvid, speaker)
 
@@ -120,11 +143,14 @@ guest2 = video.resize(proportional=true, width=dvid, height=dvid, guest2)
 guest2 = video.align(bottom=true, right=true, guest2)
 guest2 = video.translate(x=width-dvid, y=2*dvid, guest2)
 
+chat = video.viewport(chat)
+chat = video.align(bottom=true, chat)
+
 bg = video.color(0xeeeeee)
 # bg = blank()
 
-s = add([bg, slides, guest1, guest2, speaker])
-s = video.add_text(x=width, y=height-50, speed=100, color=0xff0000, "Hello world!", s)
+s = add([bg, slides, guest1, guest2, speaker, chat])
+# s = video.add_text(x=width, y=height-50, speed=100, color=0xff0000, "Hello world!", s)
 
 ### Encode
 
@@ -134,20 +160,3 @@ ytkey = string.trim(file.contents("youtube-key"))
 ytenc = %ffmpeg(format="flv", %audio(codec="libmp3lame", samplerate=44100, q=5), %video(codec="libx264", width=width, height=height, b="800k", g=50, preset="veryfast"))
 
 # output.youtube.live.rtmp(key=ytkey, encoder=ytenc, mksafe(s))
-
-### The chat
-
-chat = ref([])
-
-def chat_message(~protocol=_, ~data, ~headers=_, _)
-  chat := data :: !chat
-  chat := list.prefix(20, !chat)
-  http.response()
-end
-harbor.http.register(method="POST", "chat/message", chat_message)
-
-def chat_get(~protocol=_, ~data=_, ~headers=_, _)
-  ans = string.concat(separator="\n", list.rev(!chat))
-  http.response(data=ans)
-end
-harbor.http.register("chat/get", chat_get)
