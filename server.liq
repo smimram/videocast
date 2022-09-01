@@ -134,3 +134,42 @@ ytkey = string.trim(file.contents("youtube-key"))
 ytenc = %ffmpeg(format="flv", %audio(codec="libmp3lame", samplerate=44100, q=5), %video(codec="libx264", width=width, height=height, b="800k", g=50, preset="veryfast"))
 
 # output.youtube.live.rtmp(key=ytkey, encoder=ytenc, mksafe(s))
+
+### The chat
+
+# Create a chatroom
+def chatroom()
+  l = ref([])
+
+  # Current time.
+  def now()
+    list.length(!l)
+  end
+
+  # Get message from given time.
+  def get(t)
+    t = if t<0 then now()+t else t end
+    list.prefix(now()-t, !l)
+  end
+
+  # Add a new message.
+  def put(~user, ~message)
+    l := {user=user, message=message} :: !l
+  end
+
+  {now=now, get=get, put=put}
+end
+
+room = chatroom()
+
+def chat(~protocol=_, ~data, ~headers=_, _)
+  let json.parse c = data
+  if c.cmd == "message" then
+    # let json.parse m = data
+    
+    ()
+  end
+  http.response(data="0")
+end
+
+harbor.http.register("chat", chat)
