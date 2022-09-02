@@ -145,6 +145,7 @@ guest2 = video.translate(x=width-dvid, y=2*dvid, guest2)
 
 chat = video.viewport(chat)
 chat = video.align(bottom=true, chat)
+chat = video.translate(y=-5, chat)
 
 bg = video.color(0xeeeeee)
 # bg = blank()

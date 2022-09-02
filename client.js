@@ -154,18 +154,21 @@ function enumerateWebcams() {
 }
 
 function send_message() {
-  console.log("got message");
   nick = document.getElementById('chat-nick').value;
   message = document.getElementById('chat-message').value;
-  document.getElementById('chat-message').value = '';
-  url = base_url() + "/chat/message";
-  data = `<${nick}> ${message}`;
-  document.getElementById('chat').value += '\n' + data;
-  fetch(url, {method: "POST", body: data})
+  if (message != '') {
+    document.getElementById('chat-message').value = '';
+    url = base_url() + "/chat/message";
+    data = `<${nick}> ${message}`;
+    console.log("Message: " + data);
+    document.getElementById('chat').value += '\n' + data;
+    fetch(url, {method: "POST", body: data})
+  }
 }
 
 function watch_chat() {
-  fetch(base_url() + "/chat/get").then((response) => response.text()).then((text) => document.getElementById('chat').value = text);
+  if (document.getElementById('chat-update').checked)
+    fetch(base_url() + "/chat/get").then((response) => response.text()).then((text) => document.getElementById('chat').value = text);
   setTimeout(watch_chat, 1000);
 }
 
@@ -178,5 +181,5 @@ window.onload = function() {
   document.getElementById('upload-slides').addEventListener('submit', function(event) {event.preventDefault(); upload_slides()});
   enumerateWebcams();
   watch_chat();
-  document.getElementById('chat-message').addEventListener('keydown', function(event) {if(event.key === 'Enter') {send_message()}});
+  document.getElementById('chat-message').addEventListener('keydown', function(event) {if(event.key === 'Enter') send_message()});
 }
