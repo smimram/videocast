@@ -3,7 +3,7 @@
 
 width = 960
 height = 540
-height_chat = 75
+height_chat = 60
 width_cam = height/3
 height_cam = height/3
 
@@ -118,7 +118,7 @@ def chat_get(~protocol=_, ~data=_, ~headers=_, _)
 end
 harbor.http.register("chat/get", chat_get)
 
-chat = video.text.native(color=0x000000, {chat(3)})
+chat = video.text.sdl(size=15, color=0x000000, {chat(3)})
 
 ### Combine everybody
 
