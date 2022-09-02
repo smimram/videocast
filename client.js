@@ -154,14 +154,16 @@ function enumerateWebcams() {
 }
 
 function send_message() {
-  nick = document.getElementById('chat-nick').value;
-  message = document.getElementById('chat-message').value;
+  const nick = document.getElementById('chat-nick').value;
+  const message = document.getElementById('chat-message').value;
   if (message != '') {
     document.getElementById('chat-message').value = '';
     url = base_url() + "/chat/message";
     data = `<${nick}> ${message}`;
     console.log("Message: " + data);
-    document.getElementById('chat').value += '\n' + data;
+    const chat = document.getElementById('chat');
+    if (chat.value != '') chat.value += '\n';
+    chat.value += data;
     fetch(url, {method: "POST", body: data})
   }
 }

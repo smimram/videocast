@@ -3,7 +3,9 @@
 
 width = 960
 height = 540
-dvid = height/3
+height_chat = 75
+width_cam = height/3
+height_cam = height/3
 
 buffer = 0.5
 
@@ -26,12 +28,15 @@ interactive.harbor()
 
 ### The slideshow
 
+timeout = interactive.int("slides.timeout", description="Timeout for converting slides (in seconds).", 180.)
+
 # Convert a pdf to a list of png files.
-def pdf2png(pdf)
+def pdf2png(~timeout=timeout,pdf)
   dir = file.temp_dir("liqpdf")
-  if process.test(timeout=60., "pdftoppm -png #{process.quote(pdf)} #{dir}/pdf") then
+  if process.test(timeout=getter.get(timeout), "pdftoppm -progress -png #{process.quote(pdf)} #{dir}/pdf") then
     file.ls(absolute=true, sorted=true, dir)
   else
+    log.important("Conversion of pdf to png failed.")
     []
   end
 end
@@ -50,8 +55,8 @@ def advance(next)
 end
 harbor.http.register("prev", advance(false))
 harbor.http.register("next", advance(true))
-interactive.unit("prev", description="Go to the previous slide.", slides.prev)
-interactive.unit("next", description="Go to the next slide.", slides.next)
+interactive.unit("slides.prev", description="Go to the previous slide.", slides.prev)
+interactive.unit("slides.next", description="Go to the next slide.", slides.next)
 
 # Current slide
 def slide(~protocol=_, ~data=_, ~headers=_, _)
@@ -65,12 +70,6 @@ def upload_options(~protocol=_, ~data=_, ~headers=_, _)
 end
 harbor.http.register(method="OPTIONS", "upload", upload_options)
 def upload(~protocol=_, ~data, ~headers, _)
-  print("headers: #{headers}")
-  # print("GOT DATA")
-  # print("headers: #{headers}")
-  # print("url: #{url}")
-  # print("DATA: <#{data}>")
-  # print("END DATA")
   fname = file.temp("liq", ".pdf")
   file.write(data=data, fname)
   png = pdf2png(fname)
@@ -100,6 +99,8 @@ guest2 = video.crop(guest2)
 
 chat = ref([])
 
+interactive.unit("chat.clear", description="Clear the contents of the chat.", fun(_) -> chat := [])
+
 def chat_message(~protocol=_, ~data, ~headers=_, _)
   chat := data :: !chat
   chat := list.prefix(100, !chat)
@@ -117,14 +118,15 @@ def chat_get(~protocol=_, ~data=_, ~headers=_, _)
 end
 harbor.http.register("chat/get", chat_get)
 
-chat = video.text.native(color=0x000000, {chat(4)})
+chat = video.text.native(color=0x000000, {chat(3)})
 
 ### Combine everybody
 
-slides = video.resize(proportional=true, width=width-dvid, height=height, slides)
+slides = video.crop(slides)
+slides = video.resize(proportional=true, width=width-width_cam, height=height-height_chat, slides)
 slides = video.align(top=true, slides)
 
-speaker = video.resize(proportional=true, width=dvid, height=dvid, speaker)
+speaker = video.resize(proportional=true, width=width_cam, height=height_cam, speaker)
 
 # TODO: the following makes a segv when changing the value...
 # swap = interactive.bool("swap-speaker-slides", description="Swap speaker and slides.", false)
@@ -133,25 +135,23 @@ speaker = video.resize(proportional=true, width=dvid, height=dvid, speaker)
 # speaker = source.dynamic({if swap() then slides' else speaker end})
 
 speaker = video.align(top=true, right=true, speaker)
-speaker = video.translate(x=width-dvid, speaker)
+speaker = video.translate(x=width-width_cam, speaker)
 
-guest1 = video.resize(proportional=true, width=dvid, height=dvid, guest1)
+guest1 = video.resize(proportional=true, width=width_cam, height=height_cam, guest1)
 guest1 = video.align(right=true, guest1)
-guest1 = video.translate(x=width-dvid, y=dvid, guest1)
+guest1 = video.translate(x=width-width_cam, y=height_cam, guest1)
 
-guest2 = video.resize(proportional=true, width=dvid, height=dvid, guest2)
+guest2 = video.resize(proportional=true, width=width_cam, height=height_cam, guest2)
 guest2 = video.align(bottom=true, right=true, guest2)
-guest2 = video.translate(x=width-dvid, y=2*dvid, guest2)
+guest2 = video.translate(x=width-width_cam, y=2*height_cam, guest2)
 
 chat = video.viewport(chat)
 chat = video.align(bottom=true, chat)
 chat = video.translate(y=-5, chat)
 
 bg = video.color(0xeeeeee)
-# bg = blank()
 
 s = add([bg, slides, guest1, guest2, speaker, chat])
-# s = video.add_text(x=width, y=height-50, speed=100, color=0xff0000, "Hello world!", s)
 
 ### Encode
 
